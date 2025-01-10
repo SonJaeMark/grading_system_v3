@@ -1,0 +1,2 @@
+rm stringlib.o
+rm c.exe
