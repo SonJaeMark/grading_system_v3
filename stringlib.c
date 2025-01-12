@@ -171,7 +171,6 @@ void strtrim(char *in)
  *
  * @warning If `strtrim` is not defined, the program may fail to compile.
  */
-
 char* fgetsm(char *in, int size, FILE *file)  
 {
     // Read a line of input from the file
@@ -581,87 +580,29 @@ int csvToTeacher(char *studentInCsv, Teacher *teacher)
 
 
 /**
- * @brief Repeats and prints a character a specified number of times.
- * 
- * @param ch The character to repeat (as a string).
- * @param times The number of times to repeat the character.
+ * @brief Prints a formatted table displaying student information and grades.
+ *
+ * This function takes an array of `Student` structures and the number of students,
+ * and prints a formatted table including their ID, full name, and grades for various subjects.
+ *
+ * @param student Pointer to an array of `Student` structures containing student data.
+ * @param size The number of students in the array.
+ *
+ * The table includes the following columns:
+ * - ID: Unique identifier for the student.
+ * - Name: Full name (first name and last name combined).
+ * - MATH: Grade for the Math subject.
+ * - SCI: Grade for the Science subject.
+ * - ENG: Grade for the English subject.
+ * - FIL: Grade for the Filipino subject.
+ * - HIS: Grade for the History subject.
+ * - PE: Grade for the Physical Education subject.
+ * - AVE: Average grade across all subjects.
+ *
+ * The table is displayed with proper alignment and spacing for readability. 
  */
-void printRepeat(char *ch, int times) {
-    for (int i = 0; i < times; i++) 
-    {
-        printf("%s", ch);
-    }
-}
-
-/**
- * @brief Prints the header row of the table.
- * 
- * This function calculates the alignment margins for each column based on
- * the text alignment property (-1 for left, 0 for center, 1 for right).
- * It then displays the table's header row with proper spacing and borders.
- * 
- * @param table Pointer to the Table structure containing header and formatting details.
- */
-void printHeader(Table *table) {
-    int column = table->column;
-    int textAlignment = table->textAlignment;
-    int leftMargin[column];
-    int rightMargin[column];
-
-    // Calculate left and right margins for each column
-    for (int i = 0; i < column; i++) 
-    {
-        if (textAlignment == -1) // Left alignment 
-        { 
-            leftMargin[i] = table->spaceAroundtext;
-            rightMargin[i] = table->columnWidth[i] - (leftMargin[i] + strlen(table->header[i]));
-        } 
-
-        else if (textAlignment == 1) // Right alignment 
-        { 
-            rightMargin[i] = table->spaceAroundtext;
-            leftMargin[i] = table->columnWidth[i] - (rightMargin[i] + strlen(table->header[i]));
-        } 
-
-        else // Center alignment 
-        { 
-            leftMargin[i] = (table->columnWidth[i] - strlen(table->header[i])) / 2;
-            rightMargin[i] = table->columnWidth[i] - (leftMargin[i] + strlen(table->header[i]));
-        }
-    }
-
-    // Print top border
-    printf("+");
-    for (int i = 0; i < column; i++) 
-    {
-        printRepeat("-", table->columnWidth[i]);
-        printf("+");
-    }
-
-    // Print header row
-    printf("\n|");
-    for (int i = 0; i < column; i++) 
-    {
-        printRepeat(" ", leftMargin[i]);
-        printf("%s", table->header[i]);
-        printRepeat(" ", rightMargin[i]);
-        printf("|");
-    }
-
-    // Print bottom border
-    printf("\n+");
-    for (int i = 0; i < column; i++) 
-    {
-        printRepeat("-", table->columnWidth[i]);
-        printf("+");
-    }
-    printf("\n");
-}
-
-
 void printStudent(Student *student, int size)
 {
-    int idColLen = 10;
     int nameColLen = 30;
     int gradesColen = 10;
     char fullname[STR_CVS_LEN_OUT];

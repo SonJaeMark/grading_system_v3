@@ -26,7 +26,5 @@ void studentToCsv(Student *student, char studentInCsv[STR_CVS_LEN_OUT]);
 void teacherToCsv(Teacher *teacher, char teacherInCsv[STR_CVS_LEN_OUT]);
 int csvToStudent(char *studentInCsv, Student *student);
 int csvToTeacher(char *studentInCsv, Teacher *teacher);
-void printRepeat(char *ch, int times); // to remove
-void printHeader(Table *table); // to remove
 void printStudent(Student *student, int size);
 
