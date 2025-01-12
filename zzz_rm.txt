@@ -1,2 +1,3 @@
 rm stringlib.o
+rm userfilelib.o
 rm c.exe

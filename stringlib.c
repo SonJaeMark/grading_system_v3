@@ -149,26 +149,43 @@ void strtrim(char *in)
 
 
 /**
- * @brief Reads a line of input from stdin and trims leading/trailing whitespace.
+ * @brief Reads a line of input from a file, trims leading and trailing whitespace, 
+ *        and handles errors gracefully.
  *
- * This function uses `fgets` to get user input and then uses `strTrim` to remove
- * leading and trailing whitespace characters from the string.
+ * This function reads a line of text from the specified file stream into the provided
+ * buffer, trims any leading and trailing whitespace, and ensures the buffer contains
+ * a valid empty string if the read operation fails. 
  *
- * @param in The string to store the input.
- * @param size The maximum size of the input buffer (to prevent overflow).
+ * @param[in, out] in   Pointer to a character array where the input line will be stored.
+ *                      Must be large enough to hold at least `size` characters, including
+ *                      the null terminator.
+ * @param[in]      size The maximum number of characters to read, including the null terminator.
+ * @param[in]      file The file stream to read from.
+ *
+ * @return A pointer to the input buffer `in` if successful, or `NULL` if an error occurs 
+ *         or the end of the file is reached.
+ *
+ * @note This function uses `fgets` internally. The behavior is undefined if `in` is not
+ *       properly allocated. The function assumes the presence of a helper function 
+ *       `strtrim` to trim whitespace.
+ *
+ * @warning If `strtrim` is not defined, the program may fail to compile.
  */
-void fgetsm(char *in, int size) 
+
+char* fgetsm(char *in, int size, FILE *file)  
 {
-    // Read a line of input from stdin
-    if (fgets(in, size, stdin) == NULL) 
+    // Read a line of input from the file
+    if (fgets(in, size, file) == NULL) 
     {
         in[0] = '\0'; // Ensure the string is empty if reading fails
-        return;
+        return in;
     }
 
     // Trim leading and trailing whitespace
     strtrim(in);
+    return in;
 }
+
 
 
 /**
@@ -413,6 +430,7 @@ void teacherToCsv(Teacher *teacher, char teacherInCsv[STR_CVS_LEN_OUT])
 {
     char strArr[MAX_FILE_LINE][STR_CVS_LEN_IN];
     char *delim = ",";
+    int index = 0;
 
     // Convert id to string
     snprintf(strArr[0], sizeof(strArr[0]), "%d", teacher->id);
@@ -439,22 +457,17 @@ void teacherToCsv(Teacher *teacher, char teacherInCsv[STR_CVS_LEN_OUT])
     strArr[5][STR_CVS_LEN_IN - 1] = '\0'; // Ensure null-termination
 
     // student list
-    snprintf(strArr[6], sizeof(strArr[6]), "%d,%d,%d,%d,%d,%d,%d,%d,%d,%d", 
-        teacher->studentsList.studentId[0],
-        teacher->studentsList.studentId[1],
-        teacher->studentsList.studentId[2],
-        teacher->studentsList.studentId[3],
-        teacher->studentsList.studentId[4],
-        teacher->studentsList.studentId[5],
-        teacher->studentsList.studentId[6],
-        teacher->studentsList.studentId[7],
-        teacher->studentsList.studentId[8],
-        teacher->studentsList.studentId[9]
-    );
-    strArr[6][STR_CVS_LEN_IN - 1] = '\0'; // Ensure null-termination
-
-    strncpy(strArr[7], "\0", STR_CVS_LEN_IN - 1);
-    strArr[7][STR_CVS_LEN_IN - 1] = '\0'; // Ensure null-termination
+    for (int i = 6; i <= 16; i++)
+    {
+        snprintf(strArr[i], sizeof(strArr[i]), "%d", teacher->studentsList.studentId[index]);
+        strArr[i][STR_CVS_LEN_IN - 1] = '\0'; // Ensure null-termination
+        if(i == 16)
+        {
+           strncpy(strArr[i], "\0", STR_CVS_LEN_IN - 1);
+           strArr[i][STR_CVS_LEN_IN - 1] = '\0'; // Ensure null-termination
+        }
+        index++;
+    }
 
     strToCsvFormat(strArr, delim, teacherInCsv, STR_CVS_LEN_OUT);
 }
@@ -469,7 +482,7 @@ void teacherToCsv(Teacher *teacher, char teacherInCsv[STR_CVS_LEN_OUT])
  * 
  * @param studentInCsv Pointer to the string containing student information in CSV format.
  * @param student Pointer to the Student structure to populate.
- * @return int Returns 1 if the operation is successful, otherwise returns 0.
+ * @return int Returns the number of substrings parsed if successful; otherwise, returns 0.
  */
 int csvToStudent(char *studentInCsv, Student *student)
 {
@@ -484,7 +497,13 @@ int csvToStudent(char *studentInCsv, Student *student)
     }
 
     subStrCount = strSplit(studentInCsv, studentSubStr, delim);
-    
+
+    if(subStrCount != 15) 
+    {
+        printf("Bad formatting of csv");
+        return 0;
+    }
+
     sscanf(studentSubStr[0], "%d", &student->id); // str to int
     strcpy(student->fname, studentSubStr[1]); // first name
     strcpy(student->lname, studentSubStr[2]); // lastname name
@@ -500,10 +519,23 @@ int csvToStudent(char *studentInCsv, Student *student)
     sscanf(studentSubStr[12], "%f", &student->grades.HIS); // str to float grades
     sscanf(studentSubStr[13], "%f", &student->grades.PE); // str to float grades
     sscanf(studentSubStr[14], "%f", &student->grades.AVE); // str to float grades
+
+    return subStrCount;
 }
 
 
-
+/**
+ * @brief Converts a CSV-formatted string to a Teacher structure.
+ * 
+ * This function parses a string in CSV format and populates the fields of a Teacher structure.
+ * The expected format of the CSV string is:
+ * id,first_name,last_name,MM,DD,YYYY,username,section,studentId[0],studentId[1],...,studentId[9]
+ * where MM/DD/YYYY represents the date of birth, and studentId fields contain IDs of students assigned to the teacher.
+ * 
+ * @param studentInCsv Pointer to the string containing teacher information in CSV format.
+ * @param teacher Pointer to the Teacher structure to populate.
+ * @return int Returns the number of substrings parsed if successful; otherwise, returns 0.
+ */
 int csvToTeacher(char *studentInCsv, Teacher *teacher)
 {
     char studentSubStr[256][64];
@@ -518,6 +550,12 @@ int csvToTeacher(char *studentInCsv, Teacher *teacher)
 
     subStrCount = strSplit(studentInCsv, studentSubStr, delim);
     
+    if(subStrCount != 18) 
+    {
+        printf("Bad formatting of csv");
+        return 0;
+    }
+
     sscanf(studentSubStr[0], "%d", &teacher->id); // str to int
     strcpy(teacher->fname, studentSubStr[1]); // first name
     strcpy(teacher->lname, studentSubStr[2]); // lastname name
@@ -536,7 +574,162 @@ int csvToTeacher(char *studentInCsv, Teacher *teacher)
     sscanf(studentSubStr[15], "%d", &teacher->studentsList.studentId[7]); // str id to int id
     sscanf(studentSubStr[16], "%d", &teacher->studentsList.studentId[8]); // str id to int id
     sscanf(studentSubStr[17], "%d", &teacher->studentsList.studentId[9]); // str id to int id
-    
+
+    return subStrCount;
 }
 
 
+
+/**
+ * @brief Repeats and prints a character a specified number of times.
+ * 
+ * @param ch The character to repeat (as a string).
+ * @param times The number of times to repeat the character.
+ */
+void printRepeat(char *ch, int times) {
+    for (int i = 0; i < times; i++) 
+    {
+        printf("%s", ch);
+    }
+}
+
+/**
+ * @brief Prints the header row of the table.
+ * 
+ * This function calculates the alignment margins for each column based on
+ * the text alignment property (-1 for left, 0 for center, 1 for right).
+ * It then displays the table's header row with proper spacing and borders.
+ * 
+ * @param table Pointer to the Table structure containing header and formatting details.
+ */
+void printHeader(Table *table) {
+    int column = table->column;
+    int textAlignment = table->textAlignment;
+    int leftMargin[column];
+    int rightMargin[column];
+
+    // Calculate left and right margins for each column
+    for (int i = 0; i < column; i++) 
+    {
+        if (textAlignment == -1) // Left alignment 
+        { 
+            leftMargin[i] = table->spaceAroundtext;
+            rightMargin[i] = table->columnWidth[i] - (leftMargin[i] + strlen(table->header[i]));
+        } 
+
+        else if (textAlignment == 1) // Right alignment 
+        { 
+            rightMargin[i] = table->spaceAroundtext;
+            leftMargin[i] = table->columnWidth[i] - (rightMargin[i] + strlen(table->header[i]));
+        } 
+
+        else // Center alignment 
+        { 
+            leftMargin[i] = (table->columnWidth[i] - strlen(table->header[i])) / 2;
+            rightMargin[i] = table->columnWidth[i] - (leftMargin[i] + strlen(table->header[i]));
+        }
+    }
+
+    // Print top border
+    printf("+");
+    for (int i = 0; i < column; i++) 
+    {
+        printRepeat("-", table->columnWidth[i]);
+        printf("+");
+    }
+
+    // Print header row
+    printf("\n|");
+    for (int i = 0; i < column; i++) 
+    {
+        printRepeat(" ", leftMargin[i]);
+        printf("%s", table->header[i]);
+        printRepeat(" ", rightMargin[i]);
+        printf("|");
+    }
+
+    // Print bottom border
+    printf("\n+");
+    for (int i = 0; i < column; i++) 
+    {
+        printRepeat("-", table->columnWidth[i]);
+        printf("+");
+    }
+    printf("\n");
+}
+
+
+void printStudent(Student *student, int size)
+{
+    int idColLen = 10;
+    int nameColLen = 30;
+    int gradesColen = 10;
+    char fullname[STR_CVS_LEN_OUT];
+    float gradeHolder;
+    char lineSeparator[] = "+----------+------------------------------+----------+----------+----------+----------+----------+----------+----------+";
+    printf("%s\n",lineSeparator);
+    printf("|  id      |  name                        |  MATH    |  SCI     |  ENG     |  FIL     |  HIS     |  PE      |  AVE     |\n");
+    printf("%s\n",lineSeparator);
+
+    for (int i = 0; i < size; i++)
+    {
+        // id
+        printf("|  %d  ", student[i].id);
+
+        // name
+        strcpy(fullname, student[i].fname);
+        strcat(fullname, " ");
+        strcat(fullname, student[i].lname);
+        printf("|  %s",fullname);
+        for (int i = 0; i < nameColLen - (strlen(fullname) + 2); i++)
+        {
+            printf(" ");
+        }
+
+        // math
+        gradeHolder = student[i].grades.MATH;
+        printf("|");
+        gradeHolder < 10 ? printf("    ") : gradeHolder == 100 ? printf("  ") : printf("   ");
+        printf("%.2f  ", gradeHolder);
+
+        // sci
+        gradeHolder = student[i].grades.SCI;
+        printf("|");
+        gradeHolder < 10 ? printf("    ") : gradeHolder == 100 ? printf("  ") : printf("   ");
+        printf("%.2f  ", gradeHolder);
+
+        // eng 
+        gradeHolder = student[i].grades.ENG;
+        printf("|");
+        gradeHolder < 10 ? printf("    ") : gradeHolder == 100 ? printf("  ") : printf("   ");
+        printf("%.2f  ", gradeHolder);
+        
+        // fil 
+        gradeHolder = student[i].grades.FIL;
+        printf("|");
+        gradeHolder < 10 ? printf("    ") : gradeHolder == 100 ? printf("  ") : printf("   ");
+        printf("%.2f  ", gradeHolder);
+        
+        // his 
+        gradeHolder = student[i].grades.HIS;
+        printf("|");
+        gradeHolder < 10 ? printf("    ") : gradeHolder == 100 ? printf("  ") : printf("   ");
+        printf("%.2f  ", gradeHolder);
+        
+        // pe 
+        gradeHolder = student[i].grades.PE;
+        printf("|");
+        gradeHolder < 10 ? printf("    ") : gradeHolder == 100 ? printf("  ") : printf("   ");
+        printf("%.2f  ", gradeHolder);
+        
+        // ave 
+        gradeHolder = student[i].grades.AVE;
+        printf("|");
+        gradeHolder < 10 ? printf("    ") : gradeHolder == 100 ? printf("  ") : printf("   ");
+        printf("%.2f  ", gradeHolder);
+         
+        printf("|\n");
+    }
+    printf("%s\n",lineSeparator);
+    
+}
