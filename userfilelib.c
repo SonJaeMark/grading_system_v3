@@ -224,7 +224,7 @@ int getStudentById(int id, Student *student)
     int isFound = 0;
     int numOfReadVal = 0;
 
-    if(student == NULL || id < ID_INIT_VAL)
+    if(student == NULL || id < 0)
     {
         printf("ID %d is invalid or student didn't initialized\n", id);
         return 0;
@@ -300,7 +300,7 @@ int getTeacherById(int id, Teacher *teacher)
     int isFound = 0;
     int numOfReadVal = 0;
 
-    if(teacher == NULL || id < ID_INIT_VAL)
+    if(teacher == NULL || id < 0)
     {
         printf("ID %d is invalid or teacher didn't initialized\n", id);
         return 0;
