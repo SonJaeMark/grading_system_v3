@@ -63,10 +63,7 @@ int generateId();
 int saveStudent(char *studentInfoCsv);
 int saveTeacher(char *teacherInfoCsv);
 
-int readFileContent(int isTeacher, char *targetField, char *target, Teacher *teacher, Student *student); // bug
-
 int getStudentById(int id, Student *student);
-int getStudentByIdV2(int id, Student *student);// bug
 int getTeacherById(int id, Teacher *teacher);
 
 int getAllStudentByTeacherId(int id, Student *studentList);

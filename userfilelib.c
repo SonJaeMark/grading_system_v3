@@ -424,7 +424,6 @@ int getAllStudentByTeacherId(int id, Student *studentList)
  * }
  * ```
  */
- 
 int editStudent(int id, Student *student)
 {
     FILE *fptr;           // Pointer for the original student file
