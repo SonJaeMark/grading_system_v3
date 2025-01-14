@@ -7,6 +7,74 @@
 #include "stringlib.h"
 #include "userfilelib.h"
 
+
+/**
+ * @brief Sets the terminal text color.
+ * 
+ * @param colorCode The color code from the TextColor enumeration.
+ */
+void setColor(TextColor colorCode) {
+    printf("\033[1;%dm", colorCode); // Set the desired text color
+}
+
+/**
+ * @brief Resets the terminal text color to the default.
+ */
+void resetColor() {
+    printf("\033[0m"); // Reset to default
+}
+
+/**
+ * @brief Prints a success message in green text.
+ * 
+ * @param message The success message to print.
+ */
+void printfSUCCESS(char *message) {
+    setColor(GREEN_TEXT);
+    printf("[%s]\n", message);
+    resetColor();
+}
+
+/**
+ * @brief Prints an error message in red text.
+ * 
+ * @param message The error message to print.
+ */
+void printfERROR(char *message) {
+    setColor(RED_TEXT);
+    printf("!!!%s!!!\n", message);
+    resetColor();
+}
+
+/**
+ * @brief Prints a warning message in yellow text.
+ * 
+ * @param message The warning message to print.
+ */
+void printfWARNNING(char *message) {
+    setColor(YELLOW_TEXT);
+    printf("!!%s!!\n", message);
+    resetColor();
+}
+
+/**
+ * @brief Sets the input prompt color to blue.
+ */
+void fgetsmINPUT() {
+    setColor(BLUE_TEXT);
+}
+
+/**
+ * @brief Prints a specified number of newline characters.
+ * 
+ * @param numOfNewLine The number of newlines to print.
+ */
+void printNewLine(int numOfNewLine) {
+    for (int i = 0; i < numOfNewLine; i++) {
+        printf("\n");
+    }
+}
+
 /**
  * @brief Converts an array of strings into a single CSV-formatted string.
  *
@@ -41,7 +109,7 @@ void strToCsvFormat(char strArr[MAX_FILE_LINE][STR_CVS_LEN_IN], char *delimiter,
         // Check if appending the next string and delimiter exceeds the buffer
         if (strlen(strInCsvFormat) + strlen(strArr[i]) + strlen(delimiter) >= bufferSize) 
         {
-            printf("Error: Buffer size exceeded while building CSV format.\n");
+            printfERROR("Error: Buffer size exceeded while building CSV format.");
             return;
         }
         
@@ -491,7 +559,7 @@ int csvToStudent(char *studentInCsv, Student *student)
 
     if(student == NULL || strcmp("", studentInCsv) == 0)
     {
-        printf("Student in csv format is empty or student didn't initialized.");
+        printfWARNNING("Student in csv format is empty or student didn't initialized.");
         return 0;
     }
 
@@ -499,7 +567,7 @@ int csvToStudent(char *studentInCsv, Student *student)
 
     if(subStrCount != 15) 
     {
-        printf("Bad formatting of csv");
+        printfERROR("Bad formatting of csv");
         return 0;
     }
 
@@ -543,7 +611,7 @@ int csvToTeacher(char *studentInCsv, Teacher *teacher)
 
     if(teacher == NULL || strcmp("", studentInCsv) == 0)
     {
-        printf("Student in csv format is empty or student didn't initialized.");
+        printfWARNNING("Student in csv format is empty or student didn't initialized.");
         return 0;
     }
 
@@ -551,7 +619,7 @@ int csvToTeacher(char *studentInCsv, Teacher *teacher)
     
     if(subStrCount != 18) 
     {
-        printf("Bad formatting of csv");
+        printfERROR("Bad formatting of csv");
         return 0;
     }
 

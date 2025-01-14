@@ -11,11 +11,20 @@
 #define UNIQUE 0
 #define NUM_GRADES 6  // Define yung number ng subjects
 
+/**
+ * @brief Calculates the average grade of a student.
+ *
+ * This function retrieves individual subject grades from the Student structure, calculates the total,
+ * and then computes the average by dividing the total grades by the number of subjects.
+ *
+ * @param student The Student object containing the grades to calculate the average.
+ * @return float The calculated average grade.
+ */
 float getAve(Student student) {
-    float gradesArray[NUM_GRADES];
-    float totalGrades = 0.0;
-    
-    // Store ng individual grades
+    float gradesArray[NUM_GRADES]; // Array to hold individual grades
+    float totalGrades = 0.0;      // Variable to store the total of all grades
+
+    // Store individual grades in an array
     gradesArray[0] = student.grades.MATH;
     gradesArray[1] = student.grades.SCI;
     gradesArray[2] = student.grades.ENG;
@@ -23,147 +32,168 @@ float getAve(Student student) {
     gradesArray[4] = student.grades.HIS;
     gradesArray[5] = student.grades.PE;
 
-    // Calculate total grades using the arrays
+    // Calculate total grades
     for (int i = 0; i < NUM_GRADES; i++) {
         totalGrades += gradesArray[i];
     }
 
-    // Calculate average
-    float ave = totalGrades / NUM_GRADES;
-    return ave;
+    // Calculate and return the average
+    return totalGrades / NUM_GRADES;
 }
 
-void removeDuplicate(int data[], int *size)
-{
-    int indicator = 1;
-    int newSize = 0;
-    int tempOut[*size];
-    int temp = 0;
-    
-    while(indicator){
-        
-        for(int i = 0; i < *size-1; i++){
-            indicator = 0;
-            int temp = 0;
-            int currentNum = data[i];
-            int nextNum = data[i+1];
-            
-            if( currentNum > nextNum){
-                temp = nextNum;
-                data[i+1] = currentNum;
-                data[i] =temp;
-                indicator = 1;
-            }
-        }
-        
-        for(int i = 0; i < *size-1; i++){
-            int currentNum = data[i];
-            int nextNum = data[i+1];
-            
-            if( currentNum > nextNum){
+/**
+ * @brief Removes duplicate integers from an array and updates its size.
+ *
+ * This function sorts the array in ascending order, removes any duplicate values, 
+ * and updates the size of the array to reflect the new unique values.
+ *
+ * @param data The array of integers to process.
+ * @param size A pointer to the size of the array, which is updated to the new size.
+ */
+void removeDuplicate(int data[], int *size) {
+    int indicator = 1;   // Flag to control the sorting loop
+    int newSize = 0;     // New size of the array after duplicates are removed
+    int tempOut[*size];  // Temporary array to store unique values
+    int temp = 0;        // Variable for tracking the last unique number
+
+    // Sort the array in ascending order
+    while (indicator) {
+        indicator = 0;
+        for (int i = 0; i < *size - 1; i++) {
+            if (data[i] > data[i + 1]) {
+                // Swap elements if out of order
+                int temp = data[i];
+                data[i] = data[i + 1];
+                data[i + 1] = temp;
                 indicator = 1;
             }
         }
     }
-    
-    for(int i = 0; i < *size; i++)
-    {
-        if(temp != data[i]){
-            
+
+    // Remove duplicates
+    for (int i = 0; i < *size; i++) {
+        if (temp != data[i]) {
             temp = data[i];
             tempOut[newSize] = data[i];
             newSize++;
         }
     }
-    
-    for(int i = 0; i < newSize; i++)
-    {
+
+    // Copy unique values back to the original array
+    for (int i = 0; i < newSize; i++) {
         data[i] = tempOut[i];
     }
-    
+
+    // Update the size
     *size = newSize;
 }
 
-void getUnique(int base[], int baseSize, int compare[], int *compareSize)
-{
-    int newSize = 0;
-    int temp[*compareSize];
-    
-    for(int i = 0; i < *compareSize; i++)
-    {
+/**
+ * @brief Finds unique elements in the compare array not present in the base array.
+ *
+ * This function identifies and retains only the unique elements in the compare array that do not exist in the base array.
+ *
+ * @param base The base array to compare against.
+ * @param baseSize The size of the base array.
+ * @param compare The array to filter for unique values.
+ * @param compareSize A pointer to the size of the compare array, which is updated to the new size.
+ */
+void getUnique(int base[], int baseSize, int compare[], int *compareSize) {
+    int newSize = 0;          // New size for the compare array after filtering
+    int temp[*compareSize];   // Temporary array to store elements of the compare array
+
+    // Copy elements of the compare array to a temporary array
+    for (int i = 0; i < *compareSize; i++) {
         temp[i] = compare[i];
     }
-    
-    for(int i = 0; i < *compareSize; i++)
-    {
-        for(int j = 0; j < baseSize; j++)
-        {
-            if(temp[i] == base[j])
-            {
-                temp[i] = 0;
+
+    // Remove elements from temp that exist in the base array
+    for (int i = 0; i < *compareSize; i++) {
+        for (int j = 0; j < baseSize; j++) {
+            if (temp[i] == base[j]) {
+                temp[i] = 0; // Mark as duplicate
                 break;
             }
         }
     }
-    
-    for(int i = 0; i < *compareSize; i++)
-    {
-        
-        if(temp[i] != 0)
-        {
+
+    // Retain only the unique elements
+    for (int i = 0; i < *compareSize; i++) {
+        if (temp[i] != 0) {
             compare[newSize] = temp[i];
             newSize++;
         }
     }
-    
+
+    // Update the size of the compare array
     *compareSize = newSize;
 }
 
-void getMatch(int base[], int baseSize, int compare[], int *compareSize)
-{
-    int newSize = 0;
-    int temp[*compareSize];
-    int matchFlag = 0;
-    
-    for(int i = 0; i < *compareSize; i++)
-    {
+
+/**
+ * @brief Filters elements in the compare array that match elements in the base array.
+ *
+ * This function identifies elements in the compare array that are also present in the base array
+ * and modifies the compare array to contain only the matching elements. The size of the compare 
+ * array is updated accordingly.
+ *
+ * @param base The base array containing reference values.
+ * @param baseSize The size of the base array.
+ * @param compare The array to filter for matching values.
+ * @param compareSize A pointer to the size of the compare array, which is updated to the new size.
+ */
+void getMatch(int base[], int baseSize, int compare[], int *compareSize) {
+    int newSize = 0;         // Tracks the new size of the compare array after filtering
+    int temp[*compareSize];  // Temporary array to store initial elements of the compare array
+
+    // Copy elements of the compare array to a temporary array
+    for (int i = 0; i < *compareSize; i++) {
         temp[i] = compare[i];
     }
-    
-    for(int i = 0; i < *compareSize; i++)\
-    {
-        for(int j = 0; j < baseSize; j++)
-        {
-            if(temp[i] == base[j])
-            {
+
+    // Check for matching elements and store them in the compare array
+    for (int i = 0; i < *compareSize; i++) {
+        for (int j = 0; j < baseSize; j++) {
+            if (temp[i] == base[j]) { // If a match is found
                 compare[newSize] = temp[i];
                 newSize++;
             }
         }
     }
-    
+
+    // Update the size of the compare array
     *compareSize = newSize;
-    
 }
 
-int viewAllMyStudents(User *user)
-{
-    int numOfStud = 0;
+/**
+ * @brief Displays all students associated with the logged-in teacher.
+ *
+ * This function retrieves and displays all students linked to the teacher's ID. 
+ * If a student is logged in, access to this function is denied.
+ *
+ * @param user A pointer to the User object containing teacher and student details.
+ * @return int The number of students retrieved. Returns 0 if access is denied.
+ */
+int viewAllMyStudents(User *user) {
+    int numOfStud = 0; // Number of students retrieved
 
-    if(user->student->id != 0)
-    {
-        printf("You are not allowed to access this!\n");
+    // Check if the logged-in user is a student
+    if (user->student->id != 0) {
+        printfWARNNING("You are not allowed to access this!");
         return 0;
     }
 
+    // Retrieve all students linked to the teacher's ID
     numOfStud = getAllStudentByTeacherId(user->teacher->id, user->student);
 
-    for (int i = 0; i < numOfStud; i++)
-    {
-        printf("[%d]%d %s %s\n",i+1, user->student[i].id, user->student[i].fname, user->student[i].lname);
+    // Display the list of students
+    for (int i = 0; i < numOfStud; i++) {
+        printf("[%d] %d %s %s\n", i + 1, user->student[i].id, user->student[i].fname, user->student[i].lname);
     }
-    
+
+    // Reinitialize the student array to prevent residual data
     initStudent(user->student);
+
     return numOfStud;
 }
 
@@ -180,15 +210,15 @@ int addStudentToClass(User *user)
     int inputIds[inputIdsSize];
     int inputIdsHolder[inputIdsHolderCount];
     int inputIdCount = 0;
+    char buffer[STR_CVS_LEN_OUT];
 
-    // check if student is logged in
+
     if(user->student->id != 0)
     {
-        printf("!!You are not allowed to access this!\n");
+        printfWARNNING("!!You are not allowed to access this!");
         return 0;
     }
     
-    //retrieve id of studs and count current student
     for(int i = 0; i < MAX_STUDENT_COUNT; i++)
     {
         if(user->teacher->studentsList.studentId[i] != 0)
@@ -200,10 +230,10 @@ int addStudentToClass(User *user)
     }
     studRetrievedCount = currentStudCount;
 
-    //check if 10 exit
+   
     if(currentStudCount == 10)
     {
-        printf("Not able to add more studnet, you've reach the max studnet count allowable!\n");
+        printfWARNNING("Not able to add more studnet, you've reach the max studnet count allowable!");
         return 0;
     }
 
@@ -212,16 +242,14 @@ int addStudentToClass(User *user)
         inputIds[i] = 0;
     }
 
-    //ask for ids HERE
+ 
 
     while (1)
     {
-        //remove duplicate
-        //get unique
-        //count the remaining stud after validation
-        //add if the num will exceed 10 if so ask again goto HERE
+        resetColor();
         printf("Enter the ID of student you want to add in your class(separate with space if more than 1): ");
         fgetsm(strBuffer, STR_CVS_LEN_OUT, stdin);
+        fgetsmINPUT();
 
         inputIdCount = sscanf(
             strBuffer, "%d %d %d %d %d %d %d %d %d %d", 
@@ -239,17 +267,17 @@ int addStudentToClass(User *user)
 
         getUnique(studRetrieved, studRetrievedCount, inputIds, &inputIdsSize);
         if(inputIdsSize + currentStudCount <= 10) break;
-        printf("Input ID/s exceed the max allowable student count.\n");
+        printfWARNNING("Input ID/s exceed the max allowable student count.");
     }
 
-    //for each unique id  -> edit stud
     for (int i = 0; i < inputIdsSize; i++)
     {
         if(getStudentById(inputIds[i], user->student) && 
             strcpy(user->student->section, user->teacher->section) != NULL &&
             editStudent(user->student->id, user->student))
         {
-            printf("+++Student %d successfuly added to your class!\n", inputIds[i]);
+            snprintf(buffer, sizeof(buffer) + 1, "Student %d successfuly added to your class!", inputIds[i]);
+            printfSUCCESS(buffer);
             for(int j = 0; j < MAX_STUDENT_COUNT; j++)
             {
                 if(user->teacher->studentsList.studentId[j] == 0)
@@ -263,31 +291,32 @@ int addStudentToClass(User *user)
         }
         else
         {
-            printf("!!!Student %d failed to add in your class!\n", inputIds[i]);
+            snprintf(buffer, sizeof(buffer) + 1, "!!!Student %d failed to add in your class!", inputIds[i]);
+            printfERROR(buffer);
         }
     }
 
     getMatch(studRetrieved, studRetrievedCount, inputIdsHolder, &inputIdsHolderCount);
     for (int i = 0; i < inputIdsHolderCount; i++)
     {
-        printf("!Srudent ID no.%d is already in your class.\n", inputIdsHolder[i]);
+        snprintf(buffer, sizeof(buffer) + 1, "!Srudent ID no.%d is already in your class.", inputIdsHolder[i]);
+        printfWARNNING(buffer);
     }
     
-    //edit teach
 
     if(editTeacher(user->teacher->id, user->teacher))
     {
-        printf("+++Added %d in your class.\n", succeedCount);
-        printf("++you have %d in total in your class.\n", succeedCount + currentStudCount);
-        
+        snprintf(buffer, sizeof(buffer) + 1, "Added %d in your class.", succeedCount);
+        printfSUCCESS(buffer);
+        snprintf(buffer, sizeof(buffer) + 1, "you have %d in total in your class.\n", succeedCount + currentStudCount);
+        printfSUCCESS(buffer);
     }
     else
     {
-        printf("!!!Failed in editting teacher info, please contact the admin!\n");
+        printfERROR("Failed in editting teacher info, please contact the admin!");
         return 0;
     }
     
-    //initStud
     initStudent(user->student);
     return succeedCount;
 }
@@ -304,15 +333,16 @@ int removeStudentToClass(User *user)
     int inputIds[inputIdsSize];
     int inputIdsHolder[inputIdsHolderCount];
     int inputIdCount = 0;
+    char buffer[STR_CVS_LEN_OUT];
 
-    // check if student is logged in
+
     if(user->student->id != 0)
     {
-        printf("!!You are not allowed to access this!\n");
+        printfWARNNING("You are not allowed to access this!");
         return 0;
     }
 
-    //retrieve id of studs and count current student
+
     for(int i = 0; i < MAX_STUDENT_COUNT; i++)
     {
         if(user->teacher->studentsList.studentId[i] != 0)
@@ -331,12 +361,10 @@ int removeStudentToClass(User *user)
 
     while (1)
     {
-        //remove duplicate
-        //get unique
-        //count the remaining stud after validation
-        //add if the num will exceed 10 if so ask again goto HERE
+        resetColor();
         printf("Enter the ID of student you want to add in your class(separate with space if more than 1): ");
         fgetsm(strBuffer, STR_CVS_LEN_OUT, stdin);
+        fgetsmINPUT();
 
         inputIdCount = sscanf(
             strBuffer, "%d %d %d %d %d %d %d %d %d %d", 
@@ -354,17 +382,19 @@ int removeStudentToClass(User *user)
 
         getMatch(studRetrieved, studRetrievedCount, inputIds, &inputIdsSize);
         if(currentStudCount - inputIdsSize >= 0) break;
-        printf("Input ID/s exceed the total student count.\n");
+        printfWARNNING("Input ID/s exceed the total student count.");
     }
 
-    //for each match id  -> edit stud
+
     for (int i = 0; i < inputIdsSize; i++)
     {
         if(getStudentById(inputIds[i], user->student) && 
             strcpy(user->student->section, "A0") != NULL &&
             editStudent(user->student->id, user->student))
         {
-            printf("---Student %d successfuly removed to your class!\n", inputIds[i]);
+            snprintf(buffer, sizeof(buffer) + 1, "Student %d successfuly removed to your class!", inputIds[i]);
+            printfSUCCESS(buffer);
+
             for(int j = 0; j < MAX_STUDENT_COUNT; j++)
             {
                 if(user->teacher->studentsList.studentId[j] == inputIds[i])
@@ -378,31 +408,32 @@ int removeStudentToClass(User *user)
         }
         else
         {
-            printf("!!!Student %d failed to remove in your class!\n", inputIds[i]);
+            snprintf(buffer, sizeof(buffer) - 1, "Student %d failed to remove in your class!", inputIds[i]);
+            printfERROR(buffer);
         }
     }
 
     getUnique(studRetrieved, studRetrievedCount, inputIdsHolder, &inputIdsHolderCount);
     for (int i = 0; i < inputIdsHolderCount; i++)
     {
-        printf("!Student ID no.%d is not in your class.\n", inputIdsHolder[i]);
+        snprintf(buffer, sizeof(buffer) - 1, "Student ID no.%d is not in your class.", inputIdsHolder[i]);
     }
 
-    //edit teach
 
     if(editTeacher(user->teacher->id, user->teacher))
     {
-        printf("---Removed %d in your class.\n", succeedCount);
-        printf("++you have %d in total in your class.\n", currentStudCount - succeedCount);
-        
+        snprintf(buffer, sizeof(buffer) - 1, "Removed %d in your class.", succeedCount);
+        printfSUCCESS(buffer);
+        snprintf(buffer, sizeof(buffer) - 1, "You have %d in total in your class.", currentStudCount - succeedCount);
+        printfSUCCESS(buffer);
     }
     else
     {
-        printf("!!!Failed in editting teacher info, please contact the admin!\n");
+        printfERROR("Failed in editting teacher info, please contact the admin!");
         return 0;
     }
     
-    //initStud
+
     initStudent(user->student);
     return succeedCount;
 }
@@ -414,19 +445,21 @@ void viewGradesOfStudentById(User *user)
     char strBuffer[STR_CVS_LEN_OUT];
     int inputIds[inputIdsSize];
     int inputIdCount = 0;
+    char buffer[STR_CVS_LEN_OUT];
     
 
-    // check if student is logged in
     if(user->student->id != 0)
     {
-        printf("!!You are not allowed to access this!\n");
+        printfWARNNING("You are not allowed to access this!");
         return;
     }
 
     while (1)
     {
+        resetColor();
         printf("Enter the ID of student you want to see grades: ");
         fgetsm(strBuffer, STR_CVS_LEN_OUT, stdin);
+        fgetsmINPUT();
 
         inputIdCount = sscanf(strBuffer, "%d", &inputIds[0]);
 
@@ -439,7 +472,8 @@ void viewGradesOfStudentById(User *user)
         }
         if(isexit) break;
 
-        printf("!!ID no.%d is not in you class.\n", inputIds[0]);
+        snprintf(buffer, sizeof(buffer) - 1, "ID no.%d is not in you class.", inputIds[0]);
+        printfWARNNING(buffer);
     }
 
     getStudentById(inputIds[0], user->student);
@@ -455,18 +489,20 @@ void giveGrades(User *user)
     int inputIds[inputIdsSize];
     int inputIdCount = 0;
     float grades[7];
+    char buffer[STR_CVS_LEN_OUT];
 
-    // check if student is logged in
     if(user->student->id != 0)
     {
-        printf("!!You are not allowed to access this!\n");
+        printfWARNNING("!!You are not allowed to access this!\n");
         return;
     }
 
     while (1)
     {
+        resetColor();
         printf("Enter the ID of student you want to see grades: ");
         fgetsm(strBuffer, STR_CVS_LEN_OUT, stdin);
+        fgetsmINPUT();
 
         inputIdCount = sscanf(strBuffer, "%d", &inputIds[0]);
 
@@ -479,7 +515,8 @@ void giveGrades(User *user)
         }
         if(isexit) break;
 
-        printf("!!ID no.%d is not in you class.\n", inputIds[0]);
+        snprintf(buffer, sizeof(buffer) - 1, "!!ID no.%d is not in you class.", inputIds[0]);
+        printfWARNNING(buffer);
     }
 
     getStudentById(inputIds[0], user->student);
@@ -488,6 +525,8 @@ void giveGrades(User *user)
     printf("                                            MATH SCI ENG FIL HIS PE\n");
     printf("separate with space put or 0 to skip sub-->");
     fgetsm(strBuffer, STR_CVS_LEN_OUT, stdin);
+    fgetsmINPUT();
+
     sscanf(strBuffer, "%f %f %f %f %f %f", 
         &grades[0], &grades[1], &grades[2], &grades[3], &grades[4], &grades[5]
     );
@@ -508,9 +547,10 @@ void giveGrades(User *user)
 
     if(editStudent(inputIds[0], user->student))
     {
-        printf("Grades successfuly given!\n");
+        printfSUCCESS("Grades successfuly given!");
         printf("Do you want to see grades [y]Yes || [n]No? ");
         fgetsm(strBuffer, STR_CVS_LEN_OUT, stdin);
+        fgetsmINPUT();
         if(strcmp(strBuffer, "y") == 0)
         {
             viewMyGrades(user);
@@ -518,7 +558,7 @@ void giveGrades(User *user)
     }
     else
     {
-        printf("Error in giving grades!\n");
+        printfERROR("Error in giving grades!");
     }
     initStudent(user->student);
 }
