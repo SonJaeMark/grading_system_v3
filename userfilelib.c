@@ -5,20 +5,7 @@
 #include "userfilelib.h"
 #include "stringlib.h"
 
-#define STUDENT_FILE "ffile_student.txt"
-#define TEACHER_FILE "ffile_teacher.txt"
-#define ID_VAL_FILE "ffile_id_val.txt"
-#define TEMP_FILE "ffile_temp.txt"
-#define LOG_FILE "ffile_log.txt"
-#define PASSWORD_FILE "ffile_password.txt"
-#define ID_INIT_VAL 240000
-#define STUDENT_CSV_VAL_COUNT 13
-#define TEACHER_CSV_VAL_COUNT 16
-#define ID_FIELD "id"
-#define FULLNAME_FIELD "fullname"
-#define USERNAME_FIELD "username"
-#define SECTION_FIELD "section"
-#define GET_ALL "getall"
+
 
 
 /**
@@ -373,7 +360,11 @@ int getAllStudentByTeacherId(int id, Student *studentList)
 
     for (int i = 0; i < MAX_STUDENT_COUNT; i++)
     {
-        result += getStudentById(teacher.studentsList.studentId[i], &studentList[i]);
+        if(teacher.studentsList.studentId[i] != 0) 
+        {
+            getStudentById(teacher.studentsList.studentId[i], &studentList[result]);
+            result++;
+        }
     }
     return result;
 }

@@ -1,3 +1,7 @@
 rm stringlib.o
 rm userfilelib.o
+rm userlib.o
+rm validationlib.o
+rm studentlib.o 
+rm teacherlib.o
 rm c.exe

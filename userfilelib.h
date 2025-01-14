@@ -5,6 +5,21 @@
 #define MAX_FILE_LINE 256
 #define STRUCT_MAX_CHAR 32
 
+#define STUDENT_FILE "ffile_student.txt"
+#define TEACHER_FILE "ffile_teacher.txt"
+#define ID_VAL_FILE "ffile_id_val.txt"
+#define TEMP_FILE "ffile_temp.txt"
+#define LOG_FILE "ffile_log.txt"
+#define PASSWORD_FILE "ffile_password.txt"
+#define ID_INIT_VAL 240000
+#define STUDENT_CSV_VAL_COUNT 13
+#define TEACHER_CSV_VAL_COUNT 16
+#define ID_FIELD "id"
+#define FULLNAME_FIELD "fullname"
+#define USERNAME_FIELD "username"
+#define SECTION_FIELD "section"
+#define GET_ALL "getall"
+
 #define MAX_STUDENT_COUNT 10
 
 // Date and Grades Information
