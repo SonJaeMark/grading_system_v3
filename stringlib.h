@@ -31,7 +31,7 @@ void printNewLine(int numOfNewLine);
 void strToCsvFormat(char strArr[MAX_FILE_LINE][STR_CVS_LEN_IN], char *delimiter, char *strInCsvFormat, int bufferSize);
 int strSplit(char *input, char output[MAX_FILE_LINE][STR_CVS_LEN_IN], char *delimiter);
 void strtrim(char *in); 
-char* fgetsm(char *in, int size, FILE *file) ;
+char* fgetsm(char *in, int size, FILE *file);
 float roundToDecimal(float num, int decimalPlaces);
 void initStudent(Student *student);
 void initStudentList(StudentList *studentList); 
