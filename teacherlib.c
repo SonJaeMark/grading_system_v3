@@ -276,7 +276,7 @@ int addStudentToClass(User *user)
             strcpy(user->student->section, user->teacher->section) != NULL &&
             editStudent(user->student->id, user->student))
         {
-            snprintf(buffer, sizeof(buffer) + 1, "Student %d successfuly added to your class!", inputIds[i]);
+            snprintf(buffer, sizeof(buffer) - 1, "Student %d successfuly added to your class!", inputIds[i]);
             printfSUCCESS(buffer);
             for(int j = 0; j < MAX_STUDENT_COUNT; j++)
             {
@@ -291,7 +291,7 @@ int addStudentToClass(User *user)
         }
         else
         {
-            snprintf(buffer, sizeof(buffer) + 1, "!!!Student %d failed to add in your class!", inputIds[i]);
+            snprintf(buffer, sizeof(buffer) - 1, "Student %d failed to add in your class!", inputIds[i]);
             printfERROR(buffer);
         }
     }
@@ -299,16 +299,16 @@ int addStudentToClass(User *user)
     getMatch(studRetrieved, studRetrievedCount, inputIdsHolder, &inputIdsHolderCount);
     for (int i = 0; i < inputIdsHolderCount; i++)
     {
-        snprintf(buffer, sizeof(buffer) + 1, "!Srudent ID no.%d is already in your class.", inputIdsHolder[i]);
+        snprintf(buffer, sizeof(buffer) - 1, "Srtdent ID no.%d is already in your class.", inputIdsHolder[i]);
         printfWARNNING(buffer);
     }
     
 
     if(editTeacher(user->teacher->id, user->teacher))
     {
-        snprintf(buffer, sizeof(buffer) + 1, "Added %d in your class.", succeedCount);
+        snprintf(buffer, sizeof(buffer) - 1, "Added %d in your class.", succeedCount);
         printfSUCCESS(buffer);
-        snprintf(buffer, sizeof(buffer) + 1, "you have %d in total in your class.\n", succeedCount + currentStudCount);
+        snprintf(buffer, sizeof(buffer) - 1, "you have %d in total in your class.", succeedCount + currentStudCount);
         printfSUCCESS(buffer);
     }
     else
@@ -530,11 +530,6 @@ void giveGrades(User *user)
     sscanf(strBuffer, "%f %f %f %f %f %f", 
         &grades[0], &grades[1], &grades[2], &grades[3], &grades[4], &grades[5]
     );
-
-    for(int i = 0; i < NUM_GRADES; i++)
-    {
-        printf("%.2f\n", grades[i]);
-    }
 
     user->student->grades.MATH = grades[0];
     user->student->grades.SCI = grades[1];

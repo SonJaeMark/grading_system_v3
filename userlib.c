@@ -285,14 +285,14 @@ int loginUser(User *user)
     {
         getTeacherById(id, user->teacher);
         initStudent(user->student);
-        snprintf(buffer, sizeof(buffer) - 1, "Welcome %s %s!\n", user->teacher->fname, user->teacher->lname);
+        snprintf(buffer, sizeof(buffer) - 1, "Welcome %s %s!", user->teacher->fname, user->teacher->lname);
         printfSUCCESS(buffer);
     }
     else if (!isTeacher)
     {
         getStudentById(id, user->student);
         initTeacher(user->teacher);
-        snprintf(buffer, sizeof(buffer) - 1, "Welcome %s %s!\n", user->student->fname, user->student->lname);
+        snprintf(buffer, sizeof(buffer) - 1, "Welcome %s %s!", user->student->fname, user->student->lname);
         printfSUCCESS(buffer);
     }
     
